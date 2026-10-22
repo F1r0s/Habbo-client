@@ -1,9 +1,15 @@
-const env = require('dotenv').config()
+const dotenv = require('dotenv')
 const path = require('path')
 const webpack = require('webpack')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
+const dotenvConfig = dotenv.config()
+const dotenvEnv = dotenvConfig.parsed || {}
+const clientEnv = {
+  ...dotenvEnv,
+  RESOURCES_BASE: process.env.RESOURCES_BASE || dotenvEnv.RESOURCES_BASE || '',
+}
 
 /** @type import('webpack').Configuration */
 const config = {
@@ -54,7 +60,7 @@ const config = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      "process.env": Object.entries(env.parsed).reduce((acc, [key, value]) => {
+      "process.env": Object.entries(clientEnv).reduce((acc, [key, value]) => {
         acc[key] = JSON.stringify(value)
         return acc
       }, {})
